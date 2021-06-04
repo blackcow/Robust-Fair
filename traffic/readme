@@ -1,0 +1,27 @@
+
+
+
+
+## data can be found and downloaded at
+
+http://benchmark.ini.rub.de/?section=gtsrb&subsection=dataset
+
+
+## to naturally train a model on this dataset
+
+python main.py
+
+
+## to adversarially train a model on this dataset
+
+python main_adv.py
+
+
+## to fairly adversarial training
+
+python fair_traffic.py
+
+
+## for each trained model, do evaluation and check their fairness 
+
+python eval_fair.py
