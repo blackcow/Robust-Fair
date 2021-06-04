@@ -28,7 +28,7 @@ class Cifar10():
 
         if self.mode == 'train' or self.mode == 'valid':
 
-            self.cifar10 = datasets.CIFAR10('./data', train=True, download=True1)
+            self.cifar10 = datasets.CIFAR10('./data', train=True, download=True)
 
             data_source = self.cifar10.data
             label_source = self.cifar10.targets
