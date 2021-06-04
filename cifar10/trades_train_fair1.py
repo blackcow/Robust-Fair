@@ -214,7 +214,7 @@ if __name__ == '__main__':
     argparser.add_argument('--bound1', type=float, help='fair constraints for adv error', default=0.05)
     argparser.add_argument('--rate', type=float, help='hyper-par update rate', default=0.2)
     argparser.add_argument('--inner_epoch', type=int, help='inner rounds', default=1)
-    argparser.add_argument('--hot', type= int, help='whether hot start', default= 1)
+    argparser.add_argument('--hot', type=int, help='whether hot start', default=0)
     argparser.add_argument('--rate2', type=float, help='hyper-par update rate', default=1.0)
     args = argparser.parse_args()
 
