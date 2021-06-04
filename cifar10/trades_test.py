@@ -1,9 +1,9 @@
 from __future__ import print_function
 
-from base2.utils import *
+from utils import *
 from tqdm import tqdm
-from base2.network import create_network
-from collections import OrderedDict
+from network import create_network
+# from collections import OrderedDict
 
 
 def assign_model(model, device = 'cuda'):
