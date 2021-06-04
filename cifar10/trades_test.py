@@ -4,7 +4,7 @@ from utils import *
 from tqdm import tqdm
 from network import create_network
 # from collections import OrderedDict
-
+#
 
 def assign_model(model, device = 'cuda'):
 
