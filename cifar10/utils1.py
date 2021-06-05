@@ -97,18 +97,10 @@ def feed_dataset(data, data_dict):
                  datasets.CIFAR10(data_dict, train=False, download = True,
                         transform=transform_val),
                 batch_size= 100, shuffle=True) #, **kwargs)
-
-
     return train_loader, test_loader
 
 
-
-def yopo_trades_adv(model,
-                    x_natural,
-                    LayerOneTrainer,
-                    weight,
-                    K = 3):
-
+def yopo_trades_adv(model, x_natural, LayerOneTrainer, weight, K = 3):
     # define KL-loss
     criterion_kl = nn.KLDivLoss(size_average = False)
 
@@ -134,8 +126,10 @@ def in_class(predict, label):
 
     probs = torch.zeros(10)
     for i in range(10):
-        in_class_id = torch.tensor(label == i, dtype= torch.float)
-        correct_predict = torch.tensor(predict == label, dtype= torch.float)
+        # in_class_id = torch.tensor(label == i, dtype= torch.float)
+        # correct_predict = torch.tensor(predict == label, dtype= torch.float)
+        in_class_id = (label == i).float()
+        correct_predict = (predict == label).float()
         in_class_correct_predict = (correct_predict) * (in_class_id)
         acc = torch.sum(in_class_correct_predict).item() / torch.sum(in_class_id).item()
         probs[i] = acc
@@ -151,9 +145,12 @@ def match_weight(label, diff0, diff1, diff2):
     weight2 = torch.zeros(label.shape[0], device='cuda')
 
     for i in range(10):
-        weight0 += diff0[i] * torch.tensor(label == i, dtype= torch.float).cuda()
-        weight1 += diff1[i] * torch.tensor(label == i, dtype= torch.float).cuda()
-        weight2 += diff2[i] * torch.tensor(label == i, dtype= torch.float).cuda()
+        # weight0 += diff0[i] * torch.tensor(label == i, dtype= torch.float).cuda()
+        # weight1 += diff1[i] * torch.tensor(label == i, dtype= torch.float).cuda()
+        # weight2 += diff2[i] * torch.tensor(label == i, dtype= torch.float).cuda()
+        weight0 += diff0[i] * (label == i).float()
+        weight1 += diff1[i] * (label == i).float()
+        weight2 += diff2[i] * (label == i).float()
 
     weight2 = torch.exp(2 * weight2)
     return weight0, weight1, weight2

@@ -5,6 +5,7 @@ from network import create_network
 from data_loader import get_cifar10_loader
 
 import os
+import time
 import argparse
 import torch.optim as optim
 
@@ -84,6 +85,7 @@ def main(args):
 
     ### main training loop
     for now_epoch in range(1, maxepoch + 1):
+        start = time.time()
         ## doing evaluation on test data
         a1, a2, a3, a4 = evaluate(h_net, ds_test, configs1, device)
         ## record the results for test set
@@ -182,6 +184,9 @@ def main(args):
         record_name = 'rwre_' + str(args.bound0) + '_' + str(args.bound1)
         np.savetxt(record_name, table1)
 
+        end = time.time()
+        tm = (end - start) / 60
+        print('时间(分钟):' + str(tm))
 
         if (now_epoch % 10  == 0):
             ## save model
@@ -194,10 +199,6 @@ def main(args):
                 print('Make directory and save model.')
                 torch.save(h_net.state_dict(), './models/'+ 'trade_' +str(now_epoch) + '_'+
                            str(args.beta) + '.pt')
-
-
-
-
 
 
 if __name__ == '__main__':
