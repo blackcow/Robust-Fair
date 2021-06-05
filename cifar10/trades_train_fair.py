@@ -8,6 +8,8 @@ import os
 import argparse
 import torch.optim as optim
 
+import torch.nn as nn
+
 def assign_model(model, device = 'cuda'):
 
     if (model == 'PreResNet18'):
@@ -16,7 +18,9 @@ def assign_model(model, device = 'cuda'):
         #train_net = MODEL.ResNet18().to(device)
     elif (model == 'ResNet34'):
         import deeprobust1.image.netmodels.resnet as MODEL
-        train_net = MODEL.ResNet34().to(device)
+        train_net = MODEL.ResNet34().cuda()
+
+    train_net = nn.DataParallel(train_net)
 
     return train_net
 

@@ -239,9 +239,6 @@ def best_lambda(model, test_loader, configs1, device):
     return class_clean_error, class_bndy_error, total_clean_error, total_bndy_error
 
 
-
-
-
 def best_model(model, train_loader, optimizer, LayerOneTrainer, diff0, diff1, diff2, epoch, beta, device, rounds):
 
     criterion_kl = nn.KLDivLoss(reduction='none')
