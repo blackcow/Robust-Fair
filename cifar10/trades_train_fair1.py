@@ -20,6 +20,7 @@ def assign_model(model, device = 'cuda'):
         import deeprobust1.image.netmodels.resnet as MODEL
         train_net = MODEL.ResNet34().to(device)
     train_net = nn.DataParallel(train_net)
+
     return train_net
 
 
