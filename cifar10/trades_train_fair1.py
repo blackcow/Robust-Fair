@@ -13,15 +13,15 @@ import torch.nn as nn
 def assign_model(model, device = 'cuda'):
 
     if (model == 'PreResNet18'):
-        train_net = create_network()
+        train_net = create_network().cuda()
         #import deeprobust1.image.netmodels.resnet as MODEL
         #train_net = MODEL.ResNet18().to(device)
     elif (model == 'ResNet34'):
         import deeprobust1.image.netmodels.resnet as MODEL
-        train_net = MODEL.ResNet34()
+        train_net = MODEL.ResNet34().cuda()
     # 并行化
-    train_net = nn.DataParallel(train_net).cuda()
-    train_net = train_net.module
+    # train_net = nn.DataParallel(train_net)
+    # train_net = train_net.module
 
     return train_net
 
@@ -32,7 +32,7 @@ def main(args):
     ds_train, ds_valid, ds_test = get_cifar10_loader(batch_size=args.batch_size)
 
     if args.hot == 1:
-        h_net.load_state_dict(torch.load('base4/models/'+str(args.path)))
+        h_net.load_state_dict(torch.load('./base4/models/'+str(args.path)))
         lr = 0.001
         ms = [80, 100, 120]
     else:
