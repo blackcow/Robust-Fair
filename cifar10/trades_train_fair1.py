@@ -111,8 +111,8 @@ def main(args):
         print('total boundary error ' + str(total_bndy_error))
 
         print('each class errors')
-        print(class_clean_error)
-        print(class_bndy_error)
+        print('clean_error', class_clean_error)
+        print('bndy_error', class_bndy_error)
 
         print('.............')
         print('each class inequality constraints')
@@ -183,16 +183,16 @@ def main(args):
         np.savetxt(record_name, table1)
 
 
-        if (now_epoch % 5  == 0):
+        if (now_epoch % 10  == 0):
             ## save model
-            if os.path.isdir('base4/models/'):
+            if os.path.isdir('./models/'):
                 print('Save model.')
-                torch.save(h_net.state_dict(), 'base4/models/'+ 'trade_' +str(now_epoch) + '_'+
+                torch.save(h_net.state_dict(), './models/'+ 'trade_' +str(now_epoch) + '_'+
                            str(args.beta) + '.pt')
             else:
-                os.mkdir('base4/models/')
+                os.mkdir('./models/')
                 print('Make directory and save model.')
-                torch.save(h_net.state_dict(), 'base4/models/'+ 'trade_' +str(now_epoch) + '_'+
+                torch.save(h_net.state_dict(), './models/'+ 'trade_' +str(now_epoch) + '_'+
                            str(args.beta) + '.pt')
 
 

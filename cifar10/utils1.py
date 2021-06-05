@@ -204,7 +204,8 @@ def best_lambda(model, test_loader, configs1, device):
 
     for batch_idx, (data, target) in enumerate(test_loader):
 
-        data, target = torch.tensor(data).to(device), torch.tensor(target).to(device)
+        # data, target = torch.tensor(data).to(device), torch.tensor(target).to(device)
+        data, target = data.cuda(), target.cuda()
         all_label.append(target)
 
         ## clean test
@@ -257,7 +258,8 @@ def best_model(model, train_loader, optimizer, LayerOneTrainer, diff0, diff1, di
     for j in range(rounds):
         model.train()
         for batch_idx, (data, target) in enumerate(train_loader):
-            data, target = torch.tensor(data).to(device), torch.tensor(target).to(device)
+            # data, target = torch.tensor(data).to(device), torch.tensor(target).to(device)
+            data, target = data.cuda(), target.cuda()
 
             weight0, weight1, weight2 = match_weight(target, diff0, diff1, diff2)
             ## generate attack
@@ -307,7 +309,9 @@ def evaluate(model, test_loader, configs1, device):
 
     for batch_idx, (data, target) in enumerate(test_loader):
 
-        data, target = torch.tensor(data).to(device), torch.tensor(target).to(device)
+        # data, target = torch.tensor(data).to(device), torch.tensor(target).to(device)
+        # data, target = data.to(device), target.to(device)
+        data, target = data.cuda(), target.cuda()
         all_label.append(target)
 
         ## clean test
