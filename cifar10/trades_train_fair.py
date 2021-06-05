@@ -21,7 +21,6 @@ def assign_model(model, device = 'cuda'):
         train_net = MODEL.ResNet34().cuda()
 
     train_net = nn.DataParallel(train_net)
-
     return train_net
 
 
