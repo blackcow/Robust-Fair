@@ -13,21 +13,21 @@ import torch.nn as nn
 def assign_model(model, device = 'cuda'):
 
     if (model == 'PreResNet18'):
-        train_net = create_network().cuda()
+        train_net = create_network()
         #import deeprobust1.image.netmodels.resnet as MODEL
         #train_net = MODEL.ResNet18().to(device)
     elif (model == 'ResNet34'):
         import deeprobust1.image.netmodels.resnet as MODEL
-        train_net = MODEL.ResNet34().to(device)
-    train_net = nn.DataParallel(train_net)
+        train_net = MODEL.ResNet34()
+    # 并行化
+    train_net = nn.DataParallel(train_net).cuda()
+    train_net = train_net.module
 
     return train_net
 
 
-
-
 def main(args):
-
+    os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu_id
     h_net = assign_model(args.model, 'cuda')
     ds_train, ds_valid, ds_test = get_cifar10_loader(batch_size=args.batch_size)
 
@@ -219,6 +219,7 @@ if __name__ == '__main__':
     argparser.add_argument('--inner_epoch', type=int, help='inner rounds', default=1)
     argparser.add_argument('--hot', type=int, help='whether hot start', default=0)
     argparser.add_argument('--rate2', type=float, help='hyper-par update rate', default=1.0)
+    argparser.add_argument('--gpu-id', type=str, default='0,1,2', help='gpu_id')
     args = argparser.parse_args()
 
     main(args)
