@@ -8,6 +8,7 @@ import os
 import time
 import argparse
 import torch.optim as optim
+import torch.nn as nn
 
 def assign_model(model, device = 'cuda'):
 
@@ -18,7 +19,7 @@ def assign_model(model, device = 'cuda'):
     elif (model == 'ResNet34'):
         import deeprobust1.image.netmodels.resnet as MODEL
         train_net = MODEL.ResNet34().to(device)
-
+    train_net = nn.DataParallel(train_net)
     return train_net
 
 
