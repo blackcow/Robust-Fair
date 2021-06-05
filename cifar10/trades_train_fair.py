@@ -25,8 +25,6 @@ def assign_model(model, device = 'cuda'):
     return train_net
 
 
-
-
 def main(args):
 
     h_net = assign_model(args.model, 'cuda')
