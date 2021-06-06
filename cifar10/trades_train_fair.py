@@ -27,7 +27,7 @@ def assign_model(model, device = 'cuda'):
 def main(args):
 
     h_net = assign_model(args.model, 'cuda')
-    h_net.load_state_dict(torch.load('base4/models/'+str(args.path)))
+    h_net.load_state_dict(torch.load('.pre-train/models/'+str(args.path)))
     ds_train, ds_valid, ds_test = get_cifar10_loader(batch_size=args.batch_size)
 
     ## other layer optimizer
@@ -142,14 +142,14 @@ def main(args):
 
         if (now_epoch % 10  == 0):
             ## save model
-            if os.path.isdir('base4/models/'):
+            if os.path.isdir('./fair/models/'):
                 print('Save model.')
-                torch.save(h_net.state_dict(), 'base4/models/'+ 'trade_' +str(now_epoch) + '_'+
+                torch.save(h_net.state_dict(), './fair/models/'+ 'trade_' +str(now_epoch) + '_'+
                            str(args.beta) + '.pt')
             else:
-                os.mkdir('base4/models/')
+                os.mkdir('./fair/models/')
                 print('Make directory and save model.')
-                torch.save(h_net.state_dict(), 'base4/models/'+ 'trade_' +str(now_epoch) + '_'+
+                torch.save(h_net.state_dict(), './fair/models/'+ 'trade_' +str(now_epoch) + '_'+
                            str(args.beta) + '.pt')
 
 
