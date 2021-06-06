@@ -219,7 +219,7 @@ if __name__ == '__main__':
     argparser.add_argument('--inner_epoch', type=int, help='inner rounds', default=1)
     argparser.add_argument('--hot', type=int, help='whether hot start', default=0)
     argparser.add_argument('--rate2', type=float, help='hyper-par update rate', default=1.0)
-    argparser.add_argument('--gpu-id', type=str, default='0,1,2', help='gpu_id')
+    argparser.add_argument('--gpu-id', type=str, default='3', help='gpu_id')
     args = argparser.parse_args()
 
     main(args)

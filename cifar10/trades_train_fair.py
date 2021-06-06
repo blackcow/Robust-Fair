@@ -140,7 +140,7 @@ def main(args):
         ## doing evaluation
         evaluate(h_net, ds_test, configs1, device)
 
-        if (now_epoch % 5  == 0):
+        if (now_epoch % 10  == 0):
             ## save model
             if os.path.isdir('base4/models/'):
                 print('Save model.')
