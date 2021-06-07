@@ -1,7 +1,8 @@
 from __future__ import print_function
 
 from utils1 import *
-from network import create_network
+# from network import create_network
+from preactresnet import create_network
 from data_loader import get_cifar10_loader
 
 import os
