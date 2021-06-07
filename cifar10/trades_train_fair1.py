@@ -189,6 +189,9 @@ def main(args):
         table1 = np.stack((VALID1, VALID2, VALID3, VALID4, TEST1, TEST2, TEST3, TEST4, GG0, GG1))
 
         path = './models/fair1/'
+        if not os.path.isdir(path):
+            os.mkdir(path)
+
         record_name = path + 'rwre_' + str(args.bound0) + '_' + str(args.bound1)
         np.savetxt(record_name, table1)
 
@@ -203,7 +206,7 @@ def main(args):
                 torch.save(h_net.state_dict(), path + 'trade_' +str(now_epoch) + '_'+
                            str(args.beta) + '.pt')
             else:
-                os.mkdir('./models/')
+                os.mkdir(path)
                 print('Make directory and save model.')
                 torch.save(h_net.state_dict(), path + 'trade_' +str(now_epoch) + '_'+
                            str(args.beta) + '.pt')
