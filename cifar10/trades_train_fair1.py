@@ -44,7 +44,8 @@ def main(args):
         ms = [40, 80, 120]
 
     ## other layer optimizer
-    optimizer = optim.SGD(h_net.other_layers.parameters(), lr=lr, momentum=0.9, weight_decay=5e-4)
+    # optimizer = optim.SGD(h_net.other_layers.parameters(), lr=lr, momentum=0.9, weight_decay=5e-4)
+    optimizer = optim.SGD(h_net.parameters(), lr=lr, momentum=0.9, weight_decay=5e-4)
     lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=ms, gamma=0.2)
 
     ## layer one optimizer
