@@ -76,7 +76,8 @@ class PreActResNet(nn.Module):
         rep = self.other_layer4(x)
         out = self.linear(rep)
         # rep before GlobalPooling & logits
-        return rep, out
+        # return rep, out
+        return out
 
     # def forward(self, x):
     #     x = self.layer_one(x)
