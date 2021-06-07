@@ -134,8 +134,8 @@ def in_class(predict, label):
 
     probs = torch.zeros(10)
     for i in range(10):
-        in_class_id = torch.tensor(label == i, dtype= torch.float)
-        correct_predict = torch.tensor(predict == label, dtype= torch.float)
+        in_class_id = (label == i).float()
+        correct_predict = (predict == label).float()
         in_class_correct_predict = (correct_predict) * (in_class_id)
         acc = torch.sum(in_class_correct_predict).item() / torch.sum(in_class_id).item()
         probs[i] = acc
@@ -150,8 +150,8 @@ def match_weight(label, diff0, diff1):
     weight1 = torch.zeros(label.shape[0], device='cuda')
 
     for i in range(10):
-        weight0 += diff0[i] * torch.tensor(label == i, dtype= torch.float).cuda()
-        weight1 += diff1[i] * torch.tensor(label == i, dtype= torch.float).cuda()
+        weight0 += diff0[i] * (label == i).float()
+        weight1 += diff1[i] * (label == i).float()
 
     weight1 = torch.exp(2 * weight1)
     return weight0, weight1
@@ -201,7 +201,8 @@ def best_lambda(model, test_loader, configs1, device):
 
     for batch_idx, (data, target) in enumerate(test_loader):
 
-        data, target = torch.tensor(data).to(device), torch.tensor(target).to(device)
+        # data, target = torch.tensor(data).to(device), torch.tensor(target).to(device)
+        data, target = data.cuda(), target.cuda()
         all_label.append(target)
 
         ## clean test
@@ -254,8 +255,8 @@ def best_model(model, train_loader, optimizer, LayerOneTrainer, diff0, diff1, ep
     for j in range(rounds):
         model.train()
         for batch_idx, (data, target) in enumerate(train_loader):
-            data, target = torch.tensor(data).to(device), torch.tensor(target).to(device)
-
+            # data, target = torch.tensor(data).to(device), torch.tensor(target).to(device)
+            data, target = data.cuda(), target.cuda()
             weight0, weight1 = match_weight(target, diff0, diff1)
             ## generate attack
             x_adv = yopo_trades_adv(model, data, LayerOneTrainer, weight1, K=3)
@@ -300,7 +301,8 @@ def evaluate(model, test_loader, configs1, device):
 
     for batch_idx, (data, target) in enumerate(test_loader):
 
-        data, target = torch.tensor(data).to(device), torch.tensor(target).to(device)
+        # data, target = torch.tensor(data).to(device), torch.tensor(target).to(device)
+        data, target = data.cuda(), target.cuda()
         all_label.append(target)
 
         ## clean test
