@@ -20,19 +20,22 @@ def assign_model(model, device = 'cuda'):
         import deeprobust1.image.netmodels.resnet as MODEL
         train_net = MODEL.ResNet34().cuda()
 
-    train_net = nn.DataParallel(train_net)
+    # train_net = nn.DataParallel(train_net)
     return train_net
 
 
 def main(args):
 
     h_net = assign_model(args.model, 'cuda')
+    h_net = nn.DataParallel(h_net)
     h_net.load_state_dict(torch.load('../../Fair-AT/model-cifar-wideResNet/preactresnet/'
                                      'TRADES/e0.031_depth34_widen10_drop0.0/model-wideres-epoch76.pt'))
+    h_net = h_net.module
     ds_train, ds_valid, ds_test = get_cifar10_loader(batch_size=args.batch_size)
 
     ## other layer optimizer
-    optimizer = optim.SGD(h_net.other_layers.parameters(), lr=0.001, momentum=0.9, weight_decay=5e-4)
+    # optimizer = optim.SGD(h_net.other_layers.parameters(), lr=0.001, momentum=0.9, weight_decay=5e-4)
+    optimizer = optim.SGD(h_net.parameters(), lr=0.001, momentum=0.9, weight_decay=5e-4)
     lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[80, 100, 120], gamma=0.2)
 
     ## layer one optimizer
