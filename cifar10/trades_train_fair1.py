@@ -32,7 +32,8 @@ def main(args):
     ds_train, ds_valid, ds_test = get_cifar10_loader(batch_size=args.batch_size)
 
     if args.hot == 1:
-        h_net.load_state_dict(torch.load('./base4/models/'+str(args.path)))
+        h_net.load_state_dict(torch.load('../../Fair-AT/model-cifar-wideResNet/preactresnet/'
+                                         'TRADES/e0.031_depth34_widen10_drop0.0/model-wideres-epoch76.pt'))
         lr = 0.001
         ms = [80, 100, 120]
     else:
@@ -183,7 +184,8 @@ def main(args):
 
         table1 = np.stack((VALID1, VALID2, VALID3, VALID4, TEST1, TEST2, TEST3, TEST4, GG0, GG1))
 
-        record_name = 'rwre_' + str(args.bound0) + '_' + str(args.bound1)
+        path = './models/fair1/'
+        record_name = path + 'rwre_' + str(args.bound0) + '_' + str(args.bound1)
         np.savetxt(record_name, table1)
 
         end = time.time()
@@ -192,14 +194,14 @@ def main(args):
 
         if (now_epoch % 10  == 0):
             ## save model
-            if os.path.isdir('./models/'):
+            if os.path.isdir(path):
                 print('Save model.')
-                torch.save(h_net.state_dict(), './models/'+ 'trade_' +str(now_epoch) + '_'+
+                torch.save(h_net.state_dict(), path + 'trade_' +str(now_epoch) + '_'+
                            str(args.beta) + '.pt')
             else:
                 os.mkdir('./models/')
                 print('Make directory and save model.')
-                torch.save(h_net.state_dict(), './models/'+ 'trade_' +str(now_epoch) + '_'+
+                torch.save(h_net.state_dict(), path + 'trade_' +str(now_epoch) + '_'+
                            str(args.beta) + '.pt')
 
 
@@ -219,7 +221,7 @@ if __name__ == '__main__':
     argparser.add_argument('--inner_epoch', type=int, help='inner rounds', default=1)
     argparser.add_argument('--hot', type=int, help='whether hot start', default=0)
     argparser.add_argument('--rate2', type=float, help='hyper-par update rate', default=1.0)
-    argparser.add_argument('--gpu-id', type=str, default='3', help='gpu_id')
+    argparser.add_argument('--gpu-id', type=str, default='0,1', help='gpu_id')
     args = argparser.parse_args()
 
     main(args)
