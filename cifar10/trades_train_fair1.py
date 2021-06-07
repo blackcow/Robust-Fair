@@ -33,9 +33,9 @@ def main(args):
     ds_train, ds_valid, ds_test = get_cifar10_loader(batch_size=args.batch_size)
 
     if args.hot == 1:
+        h_net = h_net.module
         h_net.load_state_dict(torch.load('../../Fair-AT/model-cifar-wideResNet/preactresnet/'
                                          'TRADES/e0.031_depth34_widen10_drop0.0/model-wideres-epoch76.pt'))
-        h_net = h_net.module
         lr = 0.001
         ms = [80, 100, 120]
     else:
