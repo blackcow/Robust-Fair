@@ -8,34 +8,32 @@ import numpy as np
 from deeprobust.image.attack.pgd import PGD
 
 
-
 class Hamiltonian(_Loss):
 
-    def __init__(self, layer, reg_cof = 1e-4):
+    def __init__(self, layer, reg_cof=1e-4):
         super(Hamiltonian, self).__init__()
         self.layer = layer
         self.reg_cof = 0
 
-
     def forward(self, x, p):
-
         y = self.layer(x)
         H = torch.sum(y * p)
         return H
 
 
 def cal_l2_norm(layer: torch.nn.Module):
- loss = 0.
- for name, param in layer.named_parameters():
-     if name == 'weight':
-         loss = loss + 0.5 * torch.norm(param,) ** 2
+    loss = 0.
+    for name, param in layer.named_parameters():
+        if name == 'weight':
+            loss = loss + 0.5 * torch.norm(param, ) ** 2
 
- return loss
+    return loss
+
 
 class FastGradientLayerOneTrainer(object):
 
     def __init__(self, Hamiltonian_func, param_optimizer,
-                    inner_steps=2, sigma = 0.008, eps = 0.03):
+                 inner_steps=2, sigma=0.008, eps=0.03):
         self.inner_steps = inner_steps
         self.sigma = sigma
         self.eps = eps
@@ -43,7 +41,6 @@ class FastGradientLayerOneTrainer(object):
         self.param_optimizer = param_optimizer
 
     def step(self, inp, p, eta, weight):
-
         p = p.detach()
         new_eps = (self.eps * weight).view(weight.shape[0], 1, 1, 1)
 
@@ -73,36 +70,35 @@ class FastGradientLayerOneTrainer(object):
         return yofo_inp, eta
 
 
-
 def feed_dataset(data, data_dict):
-    if(data == 'CIFAR10'):
+    if (data == 'CIFAR10'):
         transform_train = transforms.Compose([
-                transforms.RandomCrop(32, padding=4),
-                transforms.RandomHorizontalFlip(),
-                transforms.ToTensor(),
-                #transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
-                ])
+            transforms.RandomCrop(32, padding=4),
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            # transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+        ])
 
         transform_val = transforms.Compose([
-                transforms.ToTensor(),
-                #transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
-                ])
+            transforms.ToTensor(),
+            # transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+        ])
 
         train_loader = torch.utils.data.DataLoader(
-                 datasets.CIFAR10(data_dict, train=True, download = True,
-                        transform=transform_train),
-                 batch_size= 200, shuffle=True) #, **kwargs)
+            datasets.CIFAR10(data_dict, train=True, download=True,
+                             transform=transform_train),
+            batch_size=200, shuffle=True)  # , **kwargs)
 
-        test_loader  = torch.utils.data.DataLoader(
-                 datasets.CIFAR10(data_dict, train=False, download = True,
-                        transform=transform_val),
-                batch_size= 100, shuffle=True) #, **kwargs)
+        test_loader = torch.utils.data.DataLoader(
+            datasets.CIFAR10(data_dict, train=False, download=True,
+                             transform=transform_val),
+            batch_size=100, shuffle=True)  # , **kwargs)
     return train_loader, test_loader
 
 
-def yopo_trades_adv(model, x_natural, LayerOneTrainer, weight, K = 3):
+def yopo_trades_adv(model, x_natural, LayerOneTrainer, weight, K=3):
     # define KL-loss
-    criterion_kl = nn.KLDivLoss(size_average = False)
+    criterion_kl = nn.KLDivLoss(size_average=False)
 
     model.eval()
     eta = 0.001 * torch.randn(x_natural.shape).cuda().detach()
@@ -120,14 +116,13 @@ def yopo_trades_adv(model, x_natural, LayerOneTrainer, weight, K = 3):
     x_adv = x_natural + eta
     return x_adv
 
-
-
+# acc of each label
 def in_class(predict, label):
-
     probs = torch.zeros(10)
     for i in range(10):
         # in_class_id = torch.tensor(label == i, dtype= torch.float)
         # correct_predict = torch.tensor(predict == label, dtype= torch.float)
+        # 找到label 的对应位置，然后计算是否相等，然后 sum/总个数
         in_class_id = (label == i).float()
         correct_predict = (predict == label).float()
         in_class_correct_predict = (correct_predict) * (in_class_id)
@@ -137,9 +132,7 @@ def in_class(predict, label):
     return probs
 
 
-
 def match_weight(label, diff0, diff1, diff2):
-
     weight0 = torch.zeros(label.shape[0], device='cuda')
     weight1 = torch.zeros(label.shape[0], device='cuda')
     weight2 = torch.zeros(label.shape[0], device='cuda')
@@ -156,9 +149,7 @@ def match_weight(label, diff0, diff1, diff2):
     return weight0, weight1, weight2
 
 
-
 def cost_sensitive(lam0, lam1, lam2, beta):
-
     diff0 = torch.zeros(10)
     for i in range(10):
         for j in range(10):
@@ -179,15 +170,13 @@ def cost_sensitive(lam0, lam1, lam2, beta):
 
     diff2 = lam2
 
-    diff0 = torch.clamp(diff0, min = 0)
-    diff1 = torch.clamp(diff1, min = 0)
+    diff0 = torch.clamp(diff0, min=0)
+    diff1 = torch.clamp(diff1, min=0)
 
     return diff0, diff1, diff2
 
 
-
 def best_lambda(model, test_loader, configs1, device):
-
     print('Doing test on validation set')
     model.eval()
 
@@ -200,14 +189,13 @@ def best_lambda(model, test_loader, configs1, device):
     all_pred_adv = []
 
     for batch_idx, (data, target) in enumerate(test_loader):
-
         # data, target = torch.tensor(data).to(device), torch.tensor(target).to(device)
         data, target = data.cuda(), target.cuda()
         all_label.append(target)
 
         ## clean test
         output = model(data)
-        #test_loss += F.cross_entropy(output, target)
+        # test_loss += F.cross_entropy(output, target)
         pred = output.argmax(dim=1, keepdim=True)  # get the index of the max log-probability
         add = pred.eq(target.view_as(pred)).sum().item()
         correct += add
@@ -217,7 +205,7 @@ def best_lambda(model, test_loader, configs1, device):
         ## adv test
         adv_samples = adversary.generate(data, target, **configs1)
         output1 = model(adv_samples)
-        #test_loss += F.cross_entropy(output1, target)
+        # test_loss += F.cross_entropy(output1, target)
         pred1 = output1.argmax(dim=1, keepdim=True)  # get the index of the max log-probability
         add1 = pred1.eq(target.view_as(pred1)).sum().item()
         correct_adv += add1
@@ -230,7 +218,7 @@ def best_lambda(model, test_loader, configs1, device):
     acc = in_class(all_pred, all_label)
     acc_adv = in_class(all_pred_adv, all_label)
 
-    total_clean_error = 1- correct / len(test_loader.dataset)
+    total_clean_error = 1 - correct / len(test_loader.dataset)
     total_bndy_error = correct / len(test_loader.dataset) - correct_adv / len(test_loader.dataset)
 
     class_clean_error = 1 - acc
@@ -240,14 +228,13 @@ def best_lambda(model, test_loader, configs1, device):
 
 
 def best_model(model, train_loader, optimizer, LayerOneTrainer, diff0, diff1, diff2, epoch, beta, device, rounds):
-
     criterion_kl = nn.KLDivLoss(reduction='none')
-    #criterion_kl = nn.KLDivLoss(size_average = False)
+    # criterion_kl = nn.KLDivLoss(size_average = False)
     criterion_nat = nn.CrossEntropyLoss(reduction='none')
-    #criterion_nat = nn.CrossEntropyLoss()
+    # criterion_nat = nn.CrossEntropyLoss()
 
-    print('now epoch:  ' + str(epoch))
-    #pbar.set_description('Trades, Now epoch ' + str(epoch))
+    print('now epoch: ' + str(epoch))
+    # pbar.set_description('Trades, Now epoch ' + str(epoch))
 
     for j in range(rounds):
         model.train()
@@ -271,10 +258,10 @@ def best_model(model, train_loader, optimizer, LayerOneTrainer, diff0, diff1, di
             # loss_natural_avg = torch.sum(loss_natural * weight0) / torch.sum(weight0)
             loss_robust1 = torch.sum(loss_robust, 1)
 
-            #weight0 = weight0 / torch.sum(weight0)
-            #weight1 = weight1 / torch.sum(weight1) * beta
+            # weight0 = weight0 / torch.sum(weight0)
+            # weight1 = weight1 / torch.sum(weight1) * beta
 
-            loss = torch.sum(weight0 *loss_natural + weight1 * loss_robust1) / torch.sum(weight0 + weight1)
+            loss = torch.sum(weight0 * loss_natural + weight1 * loss_robust1) / torch.sum(weight0 + weight1)
 
             ## back propagates
             loss.backward()
@@ -286,10 +273,7 @@ def best_model(model, train_loader, optimizer, LayerOneTrainer, diff0, diff1, di
             LayerOneTrainer.param_optimizer.zero_grad()
 
 
-
-
 def evaluate(model, test_loader, configs1, device):
-
     print('Doing test')
     model.eval()
 
@@ -302,7 +286,6 @@ def evaluate(model, test_loader, configs1, device):
     all_pred_adv = []
 
     for batch_idx, (data, target) in enumerate(test_loader):
-
         # data, target = torch.tensor(data).to(device), torch.tensor(target).to(device)
         # data, target = data.to(device), target.to(device)
         data, target = data.cuda(), target.cuda()
@@ -310,7 +293,7 @@ def evaluate(model, test_loader, configs1, device):
 
         ## clean test
         output = model(data)
-        #test_loss += F.cross_entropy(output, target)
+        # test_loss += F.cross_entropy(output, target)
         pred = output.argmax(dim=1, keepdim=True)  # get the index of the max log-probability
         add = pred.eq(target.view_as(pred)).sum().item()
         correct += add
@@ -320,15 +303,15 @@ def evaluate(model, test_loader, configs1, device):
         ## adv test
         adv_samples = adversary.generate(data, target, **configs1)
         output1 = model(adv_samples)
-        #test_loss += F.cross_entropy(output1, target)
+        # test_loss += F.cross_entropy(output1, target)
         pred1 = output1.argmax(dim=1, keepdim=True)  # get the index of the max log-probability
         add1 = pred1.eq(target.view_as(pred1)).sum().item()
         correct_adv += add1
         all_pred_adv.append(pred1)
 
-    print('clean accuracy  = ' + str(correct / len(test_loader.dataset)), flush= True)
+    print('clean accuracy  = ' + str(correct / len(test_loader.dataset)), flush=True)
     print('adv accuracy  = ' + str(correct_adv / len(test_loader.dataset)), flush=True)
-
+    # 合并关于 benign 和 adv 的输出
     all_label = torch.cat(all_label).flatten()
     all_pred = torch.cat(all_pred).flatten()
     all_pred_adv = torch.cat(all_pred_adv).flatten()
@@ -344,11 +327,3 @@ def evaluate(model, test_loader, configs1, device):
     acc_adv_all = correct_adv / len(test_loader.dataset)
 
     return acc_all, acc_adv_all, acc, acc_adv
-
-
-
-
-
-
-
-
