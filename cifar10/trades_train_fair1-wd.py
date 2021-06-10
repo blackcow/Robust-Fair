@@ -129,16 +129,19 @@ def main(args):
         # print('current results: clean error, boundary error')
         # print('total clean error ' + str(total_clean_error))
         # print('total boundary error ' + str(total_bndy_error))
-        logger.info('total clean error ' + str(total_clean_error))
-        logger.info('total boundary error ' + str(total_bndy_error))
+        # logger.info('total clean error ' + str(total_clean_error))
+        # logger.info('total boundary error ' + str(total_bndy_error))
+
+        logger.info('total clean error:{.3f}}'.format(total_clean_error))
+        logger.info('total boundary error:{.3f}}'.format(total_bndy_error))
 
         # print('each class errors')
         # print('clean_error', class_clean_error)
         # print('bndy_error', class_bndy_error)
 
         logger.info('each class errors')
-        logger.info('clean_error', class_clean_error)
-        logger.info('bndy_error', class_bndy_error)
+        logger.info('clean_error', str(class_clean_error))
+        logger.info('bndy_error', str(class_bndy_error))
 
         # print('.............')
         # print('each class inequality constraints')
