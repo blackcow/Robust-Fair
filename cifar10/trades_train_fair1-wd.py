@@ -119,7 +119,7 @@ def main(args):
 
         ## given model, get the validation performance and gamma
         class_clean_error, class_bndy_error, total_clean_error, total_bndy_error = \
-            best_lambda(h_net, ds_valid, configs1, device)
+            best_lambda(h_net, ds_valid, configs1, device, logger)
 
         ## get gamma on validation set
         gamma0 = class_clean_error - total_clean_error - delta0
@@ -197,7 +197,7 @@ def main(args):
 
         ## do the model parameter update based on gamma
         _ = best_model(h_net, ds_train, optimizer, LayerOneTrainer, diff0, diff1, diff2, now_epoch,
-                       beta, device, rounds=args.inner_epoch)
+                       beta, device, rounds=args.inner_epoch, logger)
         lr_scheduler.step(now_epoch)
         layer_one_optimizer_lr_scheduler.step(now_epoch)
 
