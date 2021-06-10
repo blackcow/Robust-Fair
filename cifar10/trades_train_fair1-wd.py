@@ -17,7 +17,7 @@ import torch.nn as nn
 
 
 def assign_model(model, device='cuda'):
-    if (model == 'ResNet34'):
+    if (model == 'WideResNet'):
         train_net = nn.DataParallel(WideResNet().cuda())
     else:
         raise ValueError('have no satisfied model.')
