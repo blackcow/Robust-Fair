@@ -178,8 +178,9 @@ def cost_sensitive(lam0, lam1, lam2, beta):
     return diff0, diff1, diff2
 
 
-def best_lambda(model, test_loader, configs1, device):
-    print('Doing test on validation set')
+def best_lambda(model, test_loader, configs1, device, logger):
+    # print('Doing test on validation set')
+    logger.info('Doing test on validation set')
     model.eval()
 
     correct = 0
@@ -229,13 +230,14 @@ def best_lambda(model, test_loader, configs1, device):
     return class_clean_error, class_bndy_error, total_clean_error, total_bndy_error
 
 
-def best_model(model, train_loader, optimizer, LayerOneTrainer, diff0, diff1, diff2, epoch, beta, device, rounds):
+def best_model(model, train_loader, optimizer, LayerOneTrainer, diff0, diff1, diff2, epoch, beta, device, rounds, logger):
     criterion_kl = nn.KLDivLoss(reduction='none')
     # criterion_kl = nn.KLDivLoss(size_average = False)
     criterion_nat = nn.CrossEntropyLoss(reduction='none')
     # criterion_nat = nn.CrossEntropyLoss()
 
-    print('now epoch: ' + str(epoch))
+    # print('now epoch: ' + str(epoch))
+    logger.info('now epoch: ' + str(epoch))
     # pbar.set_description('Trades, Now epoch ' + str(epoch))
 
     for j in range(rounds):
@@ -276,7 +278,8 @@ def best_model(model, train_loader, optimizer, LayerOneTrainer, diff0, diff1, di
 
 
 def evaluate(model, test_loader, configs1, device, logger):
-    print('Doing test')
+    # print('Doing test')
+    logger.info('Doing test')
     model.eval()
 
     correct = 0
