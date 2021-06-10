@@ -106,7 +106,7 @@ def main(args):
     for now_epoch in range(1, maxepoch + 1):
         start = time.time()
         ## doing evaluation on test data
-        # a1, a2, a3, a4 = evaluate(h_net, ds_test, configs1, device, logger)
+        a1, a2, a3, a4 = evaluate(h_net, ds_test, configs1, device, logger)
         ## record the results for test set
         test_clean_avg.append(a1)
         test_adv_avg.append(a2)
