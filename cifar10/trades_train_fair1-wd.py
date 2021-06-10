@@ -197,7 +197,7 @@ def main(args):
 
         ## do the model parameter update based on gamma
         _ = best_model(h_net, ds_train, optimizer, LayerOneTrainer, diff0, diff1, diff2, now_epoch,
-                       beta, device, rounds=args.inner_epoch, logger)
+                       beta, device, rounds=args.inner_epoch, logger=logger)
         lr_scheduler.step(now_epoch)
         layer_one_optimizer_lr_scheduler.step(now_epoch)
 
