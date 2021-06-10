@@ -1,6 +1,6 @@
 # 针对 wideResNet 的 FRL
 # 基于 TRADES 的 pre-train model
-# ../Fair-AT/model-cifar-wideResNet/wideresnet/TRADES/e0.031_depth34_widen10_drop0.0/model-wideres-epoch76.pt
+# ../../Fair-AT/model-cifar-wideResNet/wideresnet/TRADES/e0.031_depth34_widen10_drop0.0/model-wideres-epoch76.pt
 from __future__ import print_function
 
 from utils1 import *
@@ -30,7 +30,7 @@ def main(args):
     ds_train, ds_valid, ds_test = get_cifar10_loader(batch_size=args.batch_size)
 
     if args.hot == 1:  # based on pre-trained model (AT: TRADES)
-        h_net.load_state_dict(torch.load('../Fair-AT/model-cifar-wideResNet/wideresnet/'
+        h_net.load_state_dict(torch.load('../../Fair-AT/model-cifar-wideResNet/wideresnet/'
                                          'TRADES/e0.031_depth34_widen10_drop0.0/model-wideres-epoch76.pt'))
         lr = 0.001
         ms = [80, 100, 120]
@@ -217,7 +217,7 @@ if __name__ == '__main__':
     argparser.add_argument('--inner_epoch', type=int, help='inner rounds', default=1)
     argparser.add_argument('--hot', type=int, help='whether hot start', default=0)
     argparser.add_argument('--rate2', type=float, help='hyper-par update rate', default=1.0)
-    argparser.add_argument('--gpu-id', type=str, default='2', help='gpu_id')
+    argparser.add_argument('--gpu-id', type=str, default='0,1', help='gpu_id')
     args = argparser.parse_args()
 
     main(args)
