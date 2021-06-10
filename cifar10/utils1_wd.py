@@ -111,7 +111,8 @@ def yopo_trades_adv(model, x_natural, LayerOneTrainer, weight, K=3):
         with torch.enable_grad():
             loss = criterion_kl(F.log_softmax(pred, dim=1), raw_soft_label)  # raw_soft_label.detach())
 
-        p = -1.0 * torch.autograd.grad(loss, [model, ])[0]
+        # p = -1.0 * torch.autograd.grad(loss, [model.layer_one_out, ])[0]
+        p = -1.0 * torch.autograd.grad(loss, [pred, ])[0]
         yofo_inp, eta = LayerOneTrainer.step(x_natural, p, eta, weight)
 
     x_adv = x_natural + eta
