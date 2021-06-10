@@ -45,6 +45,8 @@ def assign_model(model, device='cuda'):
 def main(args):
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu_id
     path = './models-wideresnet/fair1/'
+    if not os.path.isdir(path):
+        os.mkdir(path)
     logger = get_logger(path + 'train.log')
     h_net = assign_model(args.model, 'cuda')
     ds_train, ds_valid, ds_test = get_cifar10_loader(batch_size=args.batch_size)
@@ -237,14 +239,7 @@ def main(args):
 
         if (now_epoch % 10 == 0):
             ## save model
-            if os.path.isdir(path):
-                print('Save model.')
-                torch.save(h_net.state_dict(), path + 'trade_' + str(now_epoch) + '_' +
-                           str(args.beta) + '.pt')
-            else:
-                os.mkdir(path)
-                print('Make directory and save model.')
-                torch.save(h_net.state_dict(), path + 'trade_' + str(now_epoch) + '_' +
+            torch.save(h_net.state_dict(), path + 'trade_' + str(now_epoch) + '_' +
                            str(args.beta) + '.pt')
 
 
