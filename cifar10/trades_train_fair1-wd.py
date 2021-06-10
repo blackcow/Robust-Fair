@@ -3,7 +3,8 @@
 # ../../Fair-AT/model-cifar-wideResNet/wideresnet/TRADES/e0.031_depth34_widen10_drop0.0/model-wideres-epoch76.pt
 from __future__ import print_function
 
-from utils1 import *
+# from utils1 import *
+from utils1_wd import *
 # from network import create_network
 from preactresnet import create_network
 from wideresnet import *
@@ -62,13 +63,13 @@ def main(args):
     lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=ms, gamma=0.2)
 
     # ## layer one optimizer
-    # Hamiltonian_func = Hamiltonian(h_net.layer_one, 5e-4)
+    Hamiltonian_func = Hamiltonian(h_net, 5e-4)
     # layer_one_optimizer = optim.SGD(h_net.layer_one.parameters(), lr=lr_scheduler.get_lr()[0], momentum=0.9,
     #                                 weight_decay=5e-4)
     # layer_one_optimizer_lr_scheduler = optim.lr_scheduler.MultiStepLR(layer_one_optimizer,
     #                                                                   milestones=ms, gamma=0.2)
-    # LayerOneTrainer = FastGradientLayerOneTrainer(Hamiltonian_func, layer_one_optimizer,
-    #                                               args.inner_iters, sigma=2 / 255, eps=8 / 255)
+    LayerOneTrainer = FastGradientLayerOneTrainer(Hamiltonian_func, optimizer,
+                                                  args.inner_iters, sigma=2 / 255, eps=8 / 255)
 
     maxepoch = args.epoch
     device = 'cuda'
