@@ -275,7 +275,7 @@ def best_model(model, train_loader, optimizer, LayerOneTrainer, diff0, diff1, di
             # LayerOneTrainer.param_optimizer.zero_grad()
 
 
-def evaluate(model, test_loader, configs1, device):
+def evaluate(model, test_loader, configs1, device, logger):
     print('Doing test')
     model.eval()
 
@@ -311,8 +311,10 @@ def evaluate(model, test_loader, configs1, device):
         correct_adv += add1
         all_pred_adv.append(pred1)
 
-    print('clean accuracy  = ' + str(correct / len(test_loader.dataset)), flush=True)
-    print('adv accuracy  = ' + str(correct_adv / len(test_loader.dataset)), flush=True)
+    # print('clean accuracy  = ' + str(correct / len(test_loader.dataset)), flush=True)
+    # print('adv accuracy  = ' + str(correct_adv / len(test_loader.dataset)), flush=True)
+    logger.info('clean accuracy  = ' + str(correct / len(test_loader.dataset)))
+    logger.info('adv accuracy  = ' + str(correct_adv / len(test_loader.dataset)))
     # 合并关于 benign 和 adv 的输出
     all_label = torch.cat(all_label).flatten()
     all_pred = torch.cat(all_pred).flatten()
@@ -321,9 +323,12 @@ def evaluate(model, test_loader, configs1, device):
     acc = in_class(all_pred, all_label).numpy()
     acc_adv = in_class(all_pred_adv, all_label).numpy()
 
-    print('each classes clean and adversarial accuracy')
-    print(acc)
-    print(acc_adv)
+    # print('each classes clean and adversarial accuracy')
+    # print(acc)
+    # print(acc_adv)
+    logger.info('each classes clean and adversarial accuracy')
+    logger.info(acc)
+    logger.info(acc_adv)
 
     acc_all = correct / len(test_loader.dataset)
     acc_adv_all = correct_adv / len(test_loader.dataset)
