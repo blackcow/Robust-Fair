@@ -44,7 +44,8 @@ def assign_model(model, device='cuda'):
 
 def main(args):
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu_id
-    logger = get_logger('./train.log')
+    path = './models-wideresnet/fair1/'
+    logger = get_logger(path + 'train.log')
     h_net = assign_model(args.model, 'cuda')
     ds_train, ds_valid, ds_test = get_cifar10_loader(batch_size=args.batch_size)
 
@@ -223,7 +224,6 @@ def main(args):
 
         table1 = np.stack((VALID1, VALID2, VALID3, VALID4, TEST1, TEST2, TEST3, TEST4, GG0, GG1))
 
-        path = './models-wideresnet/fair1/'
         if not os.path.isdir(path):
             os.mkdir(path)
 
