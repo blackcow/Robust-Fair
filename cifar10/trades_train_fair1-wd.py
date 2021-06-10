@@ -178,7 +178,7 @@ def main(args):
 
         table1 = np.stack((VALID1, VALID2, VALID3, VALID4, TEST1, TEST2, TEST3, TEST4, GG0, GG1))
 
-        path = './wideresnet/fair1/'
+        path = './models-wideresnet/fair1/'
         if not os.path.isdir(path):
             os.mkdir(path)
 
