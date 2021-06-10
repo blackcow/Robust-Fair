@@ -14,7 +14,24 @@ import time
 import argparse
 import torch.optim as optim
 import torch.nn as nn
+import logging
 
+
+def get_logger(filename, verbosity=1, name=None):
+    level_dict = {0: logging.DEBUG, 1: logging.INFO, 2: logging.WARNING}
+    formatter = logging.Formatter("%(message)s")
+    logger = logging.getLogger(name)
+    logger.setLevel(level_dict[verbosity])
+
+    fh = logging.FileHandler(filename, "w")
+    fh.setFormatter(formatter)
+    logger.addHandler(fh)
+
+    sh = logging.StreamHandler()
+    sh.setFormatter(formatter)
+    logger.addHandler(sh)
+
+    return logger
 
 def assign_model(model, device='cuda'):
     if (model == 'WideResNet'):
@@ -26,6 +43,7 @@ def assign_model(model, device='cuda'):
 
 def main(args):
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu_id
+    logger = get_logger('./train.log')
     h_net = assign_model(args.model, 'cuda')
     ds_train, ds_valid, ds_test = get_cifar10_loader(batch_size=args.batch_size)
 
@@ -91,7 +109,9 @@ def main(args):
         test_clean_wst.append(np.min(a3))
         test_adv_wst.append(np.min(a4))
 
-        print('train epoch ' + str(now_epoch), flush=True)
+        # print('train epoch ' + str(now_epoch), flush=True)
+        logger.info('train epoch ' + str(now_epoch))
+
 
         ## given model, get the validation performance and gamma
         class_clean_error, class_bndy_error, total_clean_error, total_bndy_error = \
@@ -106,17 +126,27 @@ def main(args):
 
         ## print inequality results
         # print('current results: clean error, boundary error')
-        print('total clean error ' + str(total_clean_error))
-        print('total boundary error ' + str(total_bndy_error))
+        # print('total clean error ' + str(total_clean_error))
+        # print('total boundary error ' + str(total_bndy_error))
+        logger.info('total clean error ' + str(total_clean_error))
+        logger.info('total boundary error ' + str(total_bndy_error))
 
-        print('each class errors')
-        print('clean_error', class_clean_error)
-        print('bndy_error', class_bndy_error)
+        # print('each class errors')
+        # print('clean_error', class_clean_error)
+        # print('bndy_error', class_bndy_error)
 
-        print('.............')
-        print('each class inequality constraints')
-        print(class_clean_error - total_clean_error)
-        print(class_bndy_error - total_bndy_error)
+        logger.info('each class errors')
+        logger.info('clean_error', class_clean_error)
+        logger.info('bndy_error', class_bndy_error)
+
+        # print('.............')
+        # print('each class inequality constraints')
+        # print(class_clean_error - total_clean_error)
+        # print(class_bndy_error - total_bndy_error)
+        logger.info('.............')
+        logger.info('each class inequality constraints')
+        logger.info(class_clean_error - total_clean_error)
+        logger.info(class_bndy_error - total_bndy_error)
 
         ## record the results for validation set
         valid_adv_avg.append(1 - (total_bndy_error + total_clean_error))
@@ -142,14 +172,21 @@ def main(args):
         lmbda = torch.cat([lmbda0, lmbda1, lmbda2])
 
         ## given best lambda, solving outside to find best model
-        print('..............................')
+        # print('..............................')
+        logger.info('..............................')
         diff0, diff1, diff2 = cost_sensitive(lmbda0, lmbda1, lmbda2, beta)
 
-        print('current weight')
-        print(diff0)
-        print(diff1)
-        print(diff2)
-        print('..............................')
+        # print('current weight')
+        # print(diff0)
+        # print(diff1)
+        # print(diff2)
+        # print('..............................')
+
+        logger.info('current weight')
+        logger.info(diff0)
+        logger.info(diff1)
+        logger.info(diff2)
+        logger.info('..............................')
 
         ## do the model parameter update based on gamma
         _ = best_model(h_net, ds_train, optimizer, LayerOneTrainer, diff0, diff1, diff2, now_epoch,
@@ -157,10 +194,14 @@ def main(args):
         lr_scheduler.step(now_epoch)
         layer_one_optimizer_lr_scheduler.step(now_epoch)
 
-        print('................................................................................')
-        print('................................................................................')
-        print('................................................................................')
-        print('test on current epoch')
+        # print('................................................................................')
+        # print('................................................................................')
+        # print('................................................................................')
+        # print('test on current epoch')
+        logger.info('................................................................................')
+        logger.info('................................................................................')
+        logger.info('................................................................................')
+        logger.info('test on current epoch')
 
         ##save the results
         TEST1 = np.array(test_adv_avg)
@@ -187,7 +228,8 @@ def main(args):
 
         end = time.time()
         tm = (end - start) / 60
-        print('时间(分钟):' + str(tm))
+        # print('时间(分钟):' + str(tm))
+        logger.info('时间(分钟):' + str(tm))
 
         if (now_epoch % 10 == 0):
             ## save model
