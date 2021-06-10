@@ -44,7 +44,7 @@ def assign_model(model, device='cuda'):
 
 def main(args):
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu_id
-    path = './models-wideresnet/fair1/'
+    path = '/models-wideresnet/fair1/'
     if not os.path.isdir(path):
         os.mkdir(path)
     logger = get_logger(path + 'train.log')
