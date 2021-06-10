@@ -46,7 +46,7 @@ def main(args):
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu_id
     path = '/models-wideresnet/fair1/'
     if not os.path.isdir(path):
-        os.mkdir(path)
+        os.makedirs(path)
     logger = get_logger(path + 'train.log')
     h_net = assign_model(args.model, 'cuda')
     ds_train, ds_valid, ds_test = get_cifar10_loader(batch_size=args.batch_size)
